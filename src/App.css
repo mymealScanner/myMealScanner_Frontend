@@ -1,0 +1,679 @@
+/* 기본 초기화 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 전체 페이지는 흰색 배경 */
+.app-container {
+  background-color: #ffffff;
+  color: #333;
+  min-height: 100vh;
+  font-family: sans-serif;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 상단 초록색 영역 */
+.hero-wrapper {
+  background-color: #3f6048;
+  color: #ffffff;
+}
+
+/* 로고 영역 */
+.top-header {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px 10%;
+}
+
+.logo-button {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logo-button span {
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+
+/* 히어로 섹션 */
+.hero-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 10% 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+  gap: 50px;
+  position: relative;
+}
+
+.robot-container {
+  position: absolute;
+  right: 5%;       
+  bottom: -60px;    
+}
+
+/* 로봇 이미지 */
+.robot-img {
+  width: 350px;
+  height: auto;
+  filter: drop-shadow(0 20px 20px rgba(0,0,0,0.4));
+  animation: float 3s ease-in-out infinite;
+}
+.paytone-title {
+  font-family: "Paytone One", sans-serif;
+  font-weight: 200;
+  letter-spacing: 0.5\px; 
+}
+
+
+.text-content {
+  max-width: 600px;
+  color: #ffffff;
+}
+
+.text-content h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 5px;
+}
+
+.text-content p {
+  margin-bottom: 20px;
+  opacity: 0.9;
+}
+
+.upload-btn {
+  padding: 12px 24px;
+  border: 2px solid #ffffff;
+  background: transparent;
+  color: #ffffff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.upload-btn:hover {
+  background: #ffffff;
+  color: #3f6048;
+}
+
+.robot-img {
+  width: 350px;
+  height: auto;
+  filter: drop-shadow(0 20px 20px rgba(0,0,0,0.4));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0); }
+}
+
+/* 슬라이더 섹션 */
+.slider-section {
+  text-align: center;
+  padding: 120px 0 40px;
+  background: #ffffff;
+  color: #333;
+  width: 100%;
+}
+
+.slider-section h2 {
+  font-size: 1.9rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+/* 부제목 */
+.slider-subtitle {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 50px; 
+}
+
+.food-strip-wrapper {
+  position: relative;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+/* 위아래 곡선 느낌 */
+.food-strip-wrapper::before,
+.food-strip-wrapper::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 50px;         
+  background: #ffffff;
+  z-index: 10;
+}
+
+/* 위쪽 곡선 */
+.food-strip-wrapper::before {
+  top: -20px;
+  border-bottom-left-radius: 100% 40px;
+  border-bottom-right-radius: 100% 40px;
+}
+
+/* 아래쪽 곡선 */
+.food-strip-wrapper::after {
+  bottom: -20px;
+  border-top-left-radius: 100% 40px;
+  border-top-right-radius: 100% 40px;
+}
+
+
+/* 슬라이더 컨테이너  */
+.food-strip {
+  width: 100%;
+}
+
+.food-strip .swiper-slide {
+  width: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+.food-strip .swiper-slide img {
+  width: 100%;
+  height: 270px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  margin: 0; 
+}
+
+/* 가운데 강조 */
+.food-strip .swiper-slide-active {
+  transform: scale(1.02);
+}
+
+/* 양 옆(좌우) 슬라이드*/
+.food-strip .swiper-slide-prev,
+.food-strip .swiper-slide-next {
+  transform: scaleX(1.14);
+}
+
+/* 본문 소개 영역 */
+.description-section {
+  background: #ffffff;
+  color: #767676;
+  padding: 40px 12% 80px;
+  font-size: 1rem;
+  line-height: 1.9;
+  text-align: left;
+  max-width: 1000px;
+  margin: 0 auto 80px;
+}
+
+.description-section p + p {
+  margin-top: 18px;
+}
+
+/* 공통 상단 헤더 */
+.top-header-container {
+  width: 100%;
+  background: #3f6048;
+}
+
+.top-header-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 16px 10%;
+}
+
+.logo-button {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.logo-button span {
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+
+
+/* ===============================
+        스캔 모드 선택 화면
+   =============================== */
+
+.simple-hero {
+  padding-bottom: 0;
+}
+
+.scan-mode-main {
+  background: #ffffff;
+  padding: 20px;
+  text-align: center;
+}
+
+/* 로고 + 설명 부분 */
+
+.scan-logo-block {
+  text-align: center;
+  margin-top: 40px;   
+  margin-bottom: 40px;
+}
+
+
+.scan-main-logo {
+  height: 250px;
+}
+
+.scan-logo-block h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.scan-subtitle {
+  font-size: 0.9rem;
+  color: #777;
+  margin-top: 6px;
+  margin-bottom: 30px;
+}
+
+/* 카드 2개 정렬 */
+.scan-card-row {
+  display: flex;
+  justify-content: center;
+  gap: 80px;
+  margin-top: 30px;
+}
+
+
+.scan-card-wrapper {
+  position: relative;
+}
+
+/* 카드 자체 */
+.scan-card {
+  width: 320px;
+  height: 420px;
+  border-radius: 40px;
+  border: none;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  background: #000;
+  position: relative;
+}
+
+/* 카드 배경 이미지 */
+.scan-card-bg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+/* 카드 안의 텍스트 */
+.scan-card-title {
+  position: absolute;
+  top: 34px;                       
+  left: 50%;                      
+  transform: translateX(-50%);    
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.45);
+}
+
+/* hover 시 살짝 확대 & 밝게 */
+.scan-card:hover .scan-card-bg {
+  transform: scale(1.05);
+  filter: brightness(0.9);
+}
+
+/* 로봇 공통 */
+.scan-robot {
+  position: absolute;
+  width: 280px;
+  bottom: -20px;        
+}
+
+/* 왼쪽 로봇 위치 */
+.scan-robot-left {
+  left: -60px;
+}
+
+/* 오른쪽 로봇 위치 */
+.scan-robot-right {
+  right: -60px;
+}
+
+
+
+
+/* ===============================
+        한 끼 스캔 업로드 공통 레이아웃
+   =============================== */
+
+.upload-step1-wrapper,
+.upload-step2-wrapper,
+.upload-preview-wrapper,
+.upload-action-wrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;  
+  align-items: center;
+}
+
+/* 1단계 : 작은 카드 */
+
+.upload-step1-wrapper {
+  margin-top: 60px;
+}
+
+.upload-step1-card {
+  width: 260px;
+  height: 180px;
+  border-radius: 8px;
+  background: #e4e4e4;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.upload-step1-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.14);
+}
+
+.upload-step1-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+  color: #3f6048;
+}
+
+.upload-step1-icon-img {
+  width: 150px;   
+  height: auto;
+  margin-bottom: 10px;
+  display: block;
+}
+.upload-step1-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* 2단계 : 큰 드래그존 */
+
+.upload-step2-wrapper {
+  margin-top: 40px;
+}
+
+.upload-dropzone {
+  width: 80%;
+  max-width: 900px;
+  background: #f4f4f4;
+  border-radius: 40px;
+  border: 2px dashed #3f6048;
+  padding: 60px 40px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+.upload-drop-icon {
+  font-size: 42px;
+  color: #3f6048;
+  margin-bottom: 12px;
+}
+
+.upload-drop-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.upload-drop-desc {
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 18px;
+}
+
+.upload-select-button {
+  padding: 10px 26px;
+  border-radius: 999px;
+  border: none;
+  background: #3f6048;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.upload-select-button:hover {
+  opacity: 0.92;
+}
+
+/* 3단계 : 미리보기 + 드롭다운 */
+
+.upload-preview-wrapper {
+  flex-direction: column;
+  margin-top: 40px;
+  gap: 24px;
+}
+
+.upload-preview-card {
+  width: 280px;
+  height: 220px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f4f4f4;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.upload-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-meta-block {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.upload-meta-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+}
+
+.upload-meta-helper {
+  font-size: 0.85rem;
+  color: #777;
+  margin-bottom: 12px;
+}
+
+.upload-meal-select {
+  width: 260px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+/* 분석 버튼 */
+
+.upload-action-wrapper {
+  margin-top: 40px;
+  margin-bottom: 80px;
+}
+
+.analysis-button {
+  padding: 14px 40px;
+  border-radius: 999px;
+  border: none;
+  background: #295433;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.analysis-button:hover {
+  opacity: 0.95;
+}
+
+.analysis-button-icon {
+  font-size: 1.1rem;
+}
+
+/* ===============================
+       하루 세끼 업로드 전용 스타일
+   =============================== */
+
+
+/* STEP1: 아침/점심/저녁 세 칸 카드 */
+.three-upload-grid {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.three-upload-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+}
+
+.three-upload-card {
+  width: 220px;
+  height: 140px;
+  border-radius: 8px;
+  border: none;
+  background: #e6e6e6;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.three-upload-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.three-upload-icon {
+  width: 120px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.three-upload-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.three-upload-label {
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+/* STEP2 안내 문구 (작은 서브 타이틀) */
+.three-meal-subtitle {
+  margin-top: 18px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* STEP3: 각 끼니별 미리보기 카드 */
+.three-preview-grid {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.three-preview-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.three-preview-card {
+  width: 220px;
+  height: 160px;
+  border-radius: 8px;
+  border: none;
+  background: #e6e6e6;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.three-preview-card.has-image {
+  background: #000;
+}
+
+.three-preview-card:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.three-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.three-preview-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+/* 분석 버튼 비활성화 스타일 */
+.analysis-button-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* 분석 버튼 아래 안내문 스타일 */
+.analysis-note {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #777;
+}
