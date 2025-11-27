@@ -10,6 +10,19 @@ const MEALS = [
   { key: 'dinner', label: '저녁' },
 ];
 
+// 백엔드 when 파라미터 매핑
+const MEAL_KEY_TO_WHEN = {
+  breakfast: 'morning',
+  lunch: 'lunch',
+  dinner: 'dinner',
+};
+
+const MEAL_KEY_TO_LABEL = {
+  breakfast: '아침',
+  lunch: '점심',
+  dinner: '저녁',
+};
+
 export default function ThreeMealsUploadPage() {
   const navigate = useNavigate();
 
@@ -39,7 +52,7 @@ export default function ThreeMealsUploadPage() {
   // 어떤 끼니 카드(아침/점심/저녁)를 눌렀는지
   const startUploadForMeal = (mealKey) => {
     setCurrentMeal(mealKey);
-    setStep(2); 
+    setStep(2);
   };
 
   // 공통: 파일 선택/드롭 → 해당 끼니에 파일 저장 + 미리보기 + 3단계 화면으로 이동
@@ -80,31 +93,105 @@ export default function ThreeMealsUploadPage() {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
+  // ─────────────────────────────────────────────
   // “AI 분석 결과 확인하기” 버튼
+  //   - 업로드된 끼니마다
+  //     1) /vision/image-detect
+  //     2) /getFoodRecipe/{foodName}
+  //     3) /nutrition/summary-recipe
+  //     세 번 호출해서 결과를 모은 뒤 ResultPage로 넘김
+  // ─────────────────────────────────────────────
+  const handleCheckResult = async () => {
+    const uploadedKeys = MEALS.map((m) => m.key).filter((k) => files[k]);
 
-const handleCheckResult = () => {
-  const uploadedCount = MEALS.filter((m) => files[m.key]).length;
+    if (uploadedKeys.length === 0) {
+      alert('최소 1개 이상의 끼니 사진을 업로드해 주세요.');
+      return;
+    }
 
-  if (uploadedCount === 0) {
-    alert('최소 1개 이상의 끼니 사진을 업로드해 주세요.');
-    return;
-  }
+    try {
+      const mealResults = {};
 
-  // ResultPage로 넘길 썸네일들
-  const previewsToSend = {
-    breakfast: previews.breakfast,
-    lunch: previews.lunch,
-    dinner: previews.dinner,
+      // 끼니별로 순차 처리 (필요하면 나중에 Promise.all로 병렬화 가능)
+      for (const key of uploadedKeys) {
+        const file = files[key];
+        const whenParam = MEAL_KEY_TO_WHEN[key];
+
+        // 1) 이미지 → 어떤 음식인지 리턴
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const detectRes = await fetch(
+          `http://localhost:8080/vision/image-detect?when=${whenParam}`,
+          {
+            method: 'POST',
+            body: formData,
+          }
+        );
+
+        if (!detectRes.ok) {
+          throw new Error(`이미지 분석 실패 (${MEAL_KEY_TO_LABEL[key]})`);
+        }
+
+        const detectData = await detectRes.json(); // { foodName, prediction, when, ... }
+        const foodName = detectData.foodName;
+
+        // 2) 음식 이름으로 레시피 정보 가져오기
+        const recipeRes = await fetch(
+          `http://localhost:8080/getFoodRecipe/${encodeURIComponent(
+            foodName
+          )}`
+        );
+
+        if (!recipeRes.ok) {
+          throw new Error(`레시피 정보 요청 실패 (${foodName})`);
+        }
+
+        const recipeData = await recipeRes.json(); // { title, ingr: [...] }
+
+        // 3) 레시피 정보를 nutrition/summary-recipe 로 보내서
+        //    총 칼로리 / 탄수화물 / 단백질 값 얻기
+        const summaryRes = await fetch(
+          'http://localhost:8080/nutrition/summary-recipe',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(recipeData),
+          }
+        );
+
+        if (!summaryRes.ok) {
+          throw new Error(
+            `영양 요약 정보 요청 실패 (${foodName})`
+          );
+        }
+
+        const nutritionData = await summaryRes.json(); // { calorie, carbohydrate, protein }
+
+        mealResults[key] = {
+          key,
+          whenLabel: MEAL_KEY_TO_LABEL[key],      // '아침' / '점심' / '저녁'
+          imageUrl: previews[key],               // 썸네일 URL
+          detect: detectData,                    // 어떤 음식인지
+          recipe: recipeData,                    // 레시피(title, ingr 배열)
+          nutrition: nutritionData,              // { calorie, carbohydrate, protein }
+        };
+      }
+
+      // 결과 페이지로 이동 + 끼니별 분석 결과 전달
+      navigate('/result', {
+        state: {
+          mode: 'threeMeals',
+          meals: mealResults,
+        },
+      });
+    } catch (err) {
+      console.error(err);
+      alert('AI 분석 중 오류가 발생했습니다. 콘솔을 확인해 주세요.');
+    }
   };
-
-  // 결과 페이지로 이동 + state 전달
-  navigate('/result', {
-    state: {
-      mode: 'threeMeals',
-      previews: previewsToSend,
-    },
-  });
-};
 
   const hasAnyImage = MEALS.some((m) => previews[m.key]);
   const canAnalyze = hasAnyImage;
@@ -120,30 +207,30 @@ const handleCheckResult = () => {
       <main className="scan-mode-main">
         {/* 서비스 로고 & 설명 */}
         <section className="scan-logo-block">
-            <img
-                src="/image/oneMealLogo.png"
-                alt="한끼스캔 (OneMeal Scan)"
-                className="scan-main-logo"
-            />
+          <img
+            src="/image/oneMealLogo.png"
+            alt="한끼스캔 (OneMeal Scan)"
+            className="scan-main-logo"
+          />
 
-            {step === 2 ? (
-                //  STEP 2 에서만 나오는 문구
-                <>
-                <h2>음식 사진을 올리면 AI가 영양정보를 분석해드립니다.</h2>
-                <p className="scan-subtitle">
-                    음식 사진을 드래그하거나 클릭하여 업로드해 주세요.
-                </p>
-                </>
-            ) : (
-                //  STEP 1 & STEP 3 에서 나오는 기본 문구
-                <>
-                <h2>당신의 건강한 습관을 위해, 매일의 식사를 똑똑하게 기록해 드릴게요.</h2>
-                <p className="scan-subtitle">
-                    AI가 이미지를 스캔하여 어떤 음식인지, 몇 칼로리인지 자동으로 계산해 드립니다.
-                </p>
-                </>
-            )}
-            </section>
+          {step === 2 ? (
+            // STEP 2 에서만 나오는 문구
+            <>
+              <h2>음식 사진을 올리면 AI가 영양정보를 분석해드립니다.</h2>
+              <p className="scan-subtitle">
+                음식 사진을 드래그하거나 클릭하여 업로드해 주세요.
+              </p>
+            </>
+          ) : (
+            // STEP 1 & STEP 3 에서 나오는 기본 문구
+            <>
+              <h2>당신의 건강한 습관을 위해, 매일의 식사를 똑똑하게 기록해 드릴게요.</h2>
+              <p className="scan-subtitle">
+                AI가 이미지를 스캔하여 어떤 음식인지, 몇 칼로리인지 자동으로 계산해 드립니다.
+              </p>
+            </>
+          )}
+        </section>
 
         {/* STEP 1 – 아침/점심/저녁 세 칸 업로드 카드 */}
         {step === 1 && (
@@ -156,7 +243,7 @@ const handleCheckResult = () => {
                   onClick={() => startUploadForMeal(meal.key)}
                 >
                   <img
-                    src="/image/oneMealUpload.png" 
+                    src="/image/oneMealUpload.png"
                     alt="사진 업로드"
                     className="three-upload-icon"
                   />
@@ -243,7 +330,6 @@ const handleCheckResult = () => {
                             alt="사진 업로드"
                             className="three-upload-icon"
                           />
-                
                         </div>
                       )}
                     </button>
@@ -255,19 +341,21 @@ const handleCheckResult = () => {
 
             {/* 분석 버튼 + 안내 문구 */}
             <section className="upload-action-wrapper">
-            <button
+              <button
                 type="button"
-                className={`analysis-button ${ !hasAnyImage ? 'analysis-button-disabled' : '' }`}
+                className={`analysis-button ${
+                  !hasAnyImage ? 'analysis-button-disabled' : ''
+                }`}
                 disabled={!hasAnyImage}
                 onClick={handleCheckResult}
-            >
+              >
                 AI 분석 결과 확인하기
                 <span className="analysis-button-icon">➜</span>
-            </button>
+              </button>
 
-            <p className="analysis-note">
+              <p className="analysis-note">
                 ** 사진을 1개 이상 업로드 할 경우에만 버튼이 활성화됩니다.
-            </p>
+              </p>
             </section>
 
             {/* 3단계에서도 다시 파일 변경 가능 */}

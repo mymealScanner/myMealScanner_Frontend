@@ -728,7 +728,6 @@
 }
 
 /* 2. 아침/점심/저녁 구역 */
-
 .result-meals-section {
   margin-top: 150px;
   display: flex;
@@ -738,7 +737,8 @@
 
 .result-meal-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  gap: 40px;
 }
 
 /* 왼쪽 이미지 */
@@ -763,10 +763,11 @@
   background: #e4e4e4;
 }
 
-/* 오른쪽 정보 영역 */
+/* 오른쪽 정보 영역 (텍스트 + 도넛차트 컨테이너) */
 .result-meal-info {
+  position: relative;   /* 도넛을 오른쪽에 띄우기 위한 기준 */
   flex: 1;
-  margin-left: 40px;
+  padding-right: 170px;
 }
 
 .result-meal-info h3 {
@@ -779,24 +780,46 @@
   color: #555;
 }
 
-/* 도넛 그래프 자리(placeholder) */
+/* 도넛 차트 전체 컨테이너 (오른쪽에 고정) */
 .result-meal-charts {
-  margin-top: 20px;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 130px;
   display: flex;
-  gap: 16px;
+  justify-content: center;
 }
 
-.result-chart-placeholder {
-  width: 90px;
-  height: 100px;
-  border-radius: 4px;
-  background: #e4e4e4;
+/* 도넛 전체 래퍼 */
+.macro-donut-wrapper {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  text-align: center;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  color: #777;
 }
+
+/* SVG 도넛 */
+.macro-donut-wrapper svg {
+  margin-top: 5px;
+}
+
+/* 도넛 중앙 텍스트 (% 표시) */
+.macro-donut-center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 0.75rem;
+  color: #444;
+  line-height: 1.1;
+  font-weight: 600;
+}
+
 
 /* 3. AI 건강 솔루션 섹션 */
 .result-solution-section {
@@ -810,7 +833,7 @@
 .result-solution-card {
   background: #e9e9e9;
   border-radius: 14px;
-  height: 250px;
+  height: 350px;
   padding: 28px 40px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.06);
   margin: 0 auto;
