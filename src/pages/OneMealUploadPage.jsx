@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import TopHeader from '../components/Topheader';
 
+
+
 export default function OneMealUploadPage() {
   const navigate = useNavigate();
 
@@ -57,7 +59,13 @@ export default function OneMealUploadPage() {
       return;
     }
     // 아직 백엔드는 없으니까 일단 알림만
-    alert(`"${mealTime}" 식사로 업로드 되었습니다. (나중에 AI 분석 결과 표시 예정)`);
+    navigate('/result', {
+      state: {
+        mode: 'oneMeal',       // 어디서 왔는지 표시용 (선택사항)
+        mealTime,              // '아침' / '점심' / '저녁'
+        imagePreview,          // 미리보기 URL
+      },
+      });
   };
 
   return (

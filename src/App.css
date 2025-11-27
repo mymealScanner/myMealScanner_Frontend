@@ -677,3 +677,218 @@
   font-size: 0.85rem;
   color: #777;
 }
+
+/* ================== 결과 페이지 ================== */
+
+.result-page {
+  background: #ffffff;
+}
+
+/* 전체 내용 폭 */
+.result-main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 0 80px;
+}
+
+/* 1. 오늘 하루 요약 카드 */
+.result-summary-card {
+  position: relative;            
+  display: flex;
+  align-items: center;
+  justify-content: center;       
+  background: #e6e6e6;
+  border-radius: 8px;
+  padding: 32px 120px 32px 80px;  
+  max-width: 700px;               
+  margin: 40px auto 60px;
+  overflow: visible;           
+}
+
+.result-summary-text {
+  flex: 1;
+  text-align: center;
+}
+
+.result-summary-text h2 {
+  font-size: 1.4rem;
+  margin-bottom: 12px;
+}
+
+.result-summary-text p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.result-summary-robot {
+  position: absolute;
+  right: -60px;     
+  bottom: -30px;
+  width: 150px;
+}
+
+/* 2. 아침/점심/저녁 구역 */
+
+.result-meals-section {
+  margin-top: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 45px;   /* 카드 사이 간격 */
+}
+
+.result-meal-row {
+  display: flex;
+  align-items: flex-start;
+}
+
+/* 왼쪽 이미지 */
+.result-meal-image {
+  width: 360px;
+  height: 230px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #e4e4e4;
+  flex-shrink: 0;
+}
+
+.result-meal-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.result-meal-image-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #e4e4e4;
+}
+
+/* 오른쪽 정보 영역 */
+.result-meal-info {
+  flex: 1;
+  margin-left: 40px;
+}
+
+.result-meal-info h3 {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.result-meal-name {
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* 도넛 그래프 자리(placeholder) */
+.result-meal-charts {
+  margin-top: 20px;
+  display: flex;
+  gap: 16px;
+}
+
+.result-chart-placeholder {
+  width: 90px;
+  height: 100px;
+  border-radius: 4px;
+  background: #e4e4e4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* 3. AI 건강 솔루션 섹션 */
+.result-solution-section {
+  position: relative;       
+  max-width: 980px;         
+  margin: 60px auto 0;      
+  padding-bottom: 80px;     
+}
+
+/* 가운데 회색 박스 */
+.result-solution-card {
+  background: #e9e9e9;
+  border-radius: 14px;
+  height: 250px;
+  padding: 28px 40px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  margin: 0 auto;
+}
+
+.result-solution-card h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.result-solution-card p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #444;
+}
+
+
+.result-solution-robot {
+  position: absolute;
+  left: -60px;     
+  bottom: 0;        
+  width: 110px;     
+  height: auto;
+}
+
+
+/* 저장 버튼 영역 */
+.result-save-section {
+  display: flex;
+  justify-content: center;
+  margin: 40px 0 0;
+}
+
+.result-save-button {
+  background: #22532f;
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 40px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #163a20;
+}
+
+.result-save-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 3px 0 #163a20;
+}
+
+
+/* 4. 저장 버튼 */
+
+.result-save-section {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+}
+
+.result-save-button {
+  padding: 14px 48px;
+  border-radius: 999px;
+  border: none;
+  background: #295530;
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 0 #1b3b22;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.result-save-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 0 #1b3b22;
+}
+
+.result-save-button:active {
+  transform: translateY(2px);
+  box-shadow: 0 3px 0 #1b3b22;
+}

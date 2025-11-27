@@ -36,10 +36,10 @@ export default function ThreeMealsUploadPage() {
 
   const handleLogoClick = () => navigate('/');
 
-  // ① 어떤 끼니 카드(아침/점심/저녁)를 눌렀는지
+  // 어떤 끼니 카드(아침/점심/저녁)를 눌렀는지
   const startUploadForMeal = (mealKey) => {
     setCurrentMeal(mealKey);
-    setStep(2); // 큰 드롭존 단계로 이동
+    setStep(2); 
   };
 
   // 공통: 파일 선택/드롭 → 해당 끼니에 파일 저장 + 미리보기 + 3단계 화면으로 이동
@@ -80,23 +80,31 @@ export default function ThreeMealsUploadPage() {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
-  // ③ “AI 분석 결과 확인하기” 버튼
-  const handleCheckResult = () => {
-    const uploadedCount = MEALS.filter((m) => files[m.key]).length;
+  // “AI 분석 결과 확인하기” 버튼
 
-    if (uploadedCount === 0) {
-      alert('최소 1개 이상의 끼니 사진을 업로드해 주세요.');
-      return;
-    }
+const handleCheckResult = () => {
+  const uploadedCount = MEALS.filter((m) => files[m.key]).length;
 
-    const uploadedMeals = MEALS.filter((m) => files[m.key])
-      .map((m) => m.label)
-      .join(', ');
+  if (uploadedCount === 0) {
+    alert('최소 1개 이상의 끼니 사진을 업로드해 주세요.');
+    return;
+  }
 
-    alert(
-      `업로드된 끼니: ${uploadedMeals}\n(나중에 여기에서 AI 분석 결과 화면)`
-    );
+  // ResultPage로 넘길 썸네일들
+  const previewsToSend = {
+    breakfast: previews.breakfast,
+    lunch: previews.lunch,
+    dinner: previews.dinner,
   };
+
+  // 결과 페이지로 이동 + state 전달
+  navigate('/result', {
+    state: {
+      mode: 'threeMeals',
+      previews: previewsToSend,
+    },
+  });
+};
 
   const hasAnyImage = MEALS.some((m) => previews[m.key]);
   const canAnalyze = hasAnyImage;
