@@ -104,7 +104,6 @@ function MacroDonutChart({ carb, protein, fat }) {
         </g>
       </svg>
 
-
       <div className="macro-donut-center-text">
         <div className="macro-center-pill macro-center-carb">
           탄 {carbPercent.toFixed(0)}%
@@ -120,7 +119,7 @@ function MacroDonutChart({ carb, protein, fat }) {
   );
 }
 
-//결과페이지
+// 결과페이지
 export default function ResultPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -144,9 +143,7 @@ export default function ResultPage() {
   const [solutionLoading, setSolutionLoading] = useState(false);
   const [solutionError, setSolutionError] = useState(null);
 
-
   // 요약/끼니별 데이터 계산
- 
   let summary = {
     kind: 'none',
     totalKcal: 0,
@@ -341,10 +338,9 @@ export default function ResultPage() {
       '오늘 기록된 식사가 없어요. 내일은 한 끼라도 AI와 함께 기록해 볼까요?';
   }
 
-
   const nutritionInfo = buildNutritionInfo(mode, meals, summary);
 
-  // ── AI 솔루션
+  // AI 솔루션 호출
   useEffect(() => {
     if (!nutritionInfo) return;
 
@@ -471,35 +467,40 @@ export default function ResultPage() {
               </div>
 
               <div className="result-meal-info">
-                <h3>{meal.when}</h3>
-                <p className="result-meal-name">{meal.foodName}</p>
+                {/* 왼쪽 텍스트 묶음 */}
+                <div className="result-meal-text">
+                  <h3>{meal.when}</h3>
+                  <p className="result-meal-name">{meal.foodName}</p>
 
-                {meal.kcal != null ? (
-                  <p className="result-meal-kcal">
-                    칼로리:{' '}
-                    {meal.kcal.toFixed ? meal.kcal.toFixed(1) : meal.kcal} kcal
-                  </p>
-                ) : null}
+                  {meal.kcal != null ? (
+                    <p className="result-meal-kcal">
+                      칼로리:{' '}
+                      {meal.kcal.toFixed ? meal.kcal.toFixed(1) : meal.kcal}{' '}
+                      kcal
+                    </p>
+                  ) : null}
 
-                {/* g가 있으면 g 우선, 없으면 퍼센트 */}
-                {meal.macrosGram ? (
-                  <p className="result-meal-macros">
-                    탄수화물 {meal.macrosGram.carb.toFixed(1)}g / 단백질{' '}
-                    {meal.macrosGram.protein.toFixed(1)}g / 지방{' '}
-                    {meal.macrosGram.fat.toFixed(1)}g
-                  </p>
-                ) : meal.macrosPercent ? (
-                  <p className="result-meal-macros">
-                    탄수화물 {meal.macrosPercent.carbPercent}% / 단백질{' '}
-                    {meal.macrosPercent.proteinPercent}% / 지방{' '}
-                    {meal.macrosPercent.fatPercent}%
-                  </p>
-                ) : (
-                  <p className="result-meal-empty">
-                    아직 이 끼니에 대한 영양 정보가 없어요.
-                  </p>
-                )}
+                  {/* g가 있으면 g 우선, 없으면 퍼센트 */}
+                  {meal.macrosGram ? (
+                    <p className="result-meal-macros">
+                      탄수화물 {meal.macrosGram.carb.toFixed(1)}g / 단백질{' '}
+                      {meal.macrosGram.protein.toFixed(1)}g / 지방{' '}
+                      {meal.macrosGram.fat.toFixed(1)}g
+                    </p>
+                  ) : meal.macrosPercent ? (
+                    <p className="result-meal-macros">
+                      탄수화물 {meal.macrosPercent.carbPercent}% / 단백질{' '}
+                      {meal.macrosPercent.proteinPercent}% / 지방{' '}
+                      {meal.macrosPercent.fatPercent}%
+                    </p>
+                  ) : (
+                    <p className="result-meal-empty">
+                      아직 이 끼니에 대한 영양 정보가 없어요.
+                    </p>
+                  )}
+                </div>
 
+                {/* 오른쪽 도넛 */}
                 <div className="result-meal-charts">
                   {meal.macrosGram ? (
                     <MacroDonutChart
@@ -543,7 +544,6 @@ export default function ResultPage() {
 
         {/* 3-1. 책임성과 투명성 안내 */}
         <section className="result-disclaimer-section">
-
           <p className="result-disclaimer-text">
             칼로리·영양정보는 실제 섭취량·조리법에 따라 달라질 수 있으므로,
             AI 분석 결과를 맹신하지 말고 참고용으로만 사용해 주세요.
