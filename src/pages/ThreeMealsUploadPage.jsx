@@ -240,6 +240,7 @@ export default function ThreeMealsUploadPage() {
               <h2>당신의 건강한 습관을 위해, 매일의 식사를 똑똑하게 기록해 드릴게요.</h2>
               <p className="scan-subtitle">
                 AI가 이미지를 스캔하여 어떤 음식인지, 몇 칼로리인지 자동으로 계산해 드립니다.
+                <br /> 개인정보가 포함된 사진은 업로드 시 유의해 주세요.
               </p>
             </>
           )}

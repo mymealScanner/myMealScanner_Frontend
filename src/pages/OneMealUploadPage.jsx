@@ -158,6 +158,7 @@ export default function OneMealUploadPage() {
               <h2>당신의 건강한 습관을 위해, 매일의 식사를 똑똑하게 기록해 드릴게요.</h2>
               <p className="scan-subtitle">
                 AI가 이미지를 스캔하여 어떤 음식인지, 몇 칼로리인지 자동으로 계산합니다.
+                <br /> 개인정보가 포함된 민감한 사진은 올리지 마세요.
               </p>
             </>
           )}
@@ -166,6 +167,7 @@ export default function OneMealUploadPage() {
               <h2>음식 사진을 올리면 AI가 영양정보를 분석해드립니다.</h2>
               <p className="scan-subtitle">
                 AI가 이미지를 스캔하여 어떤 음식인지, 몇 칼로리인지 자동으로 계산해 드립니다.
+                <br /> 개인정보가 포함된 민감한 사진은 올리지 마세요.   
               </p>
             </>
           )}
@@ -175,6 +177,7 @@ export default function OneMealUploadPage() {
               <h2>당신의 건강한 습관을 위해, 매일의 식사를 똑똑하게 기록해 드릴게요.</h2>
               <p className="scan-subtitle">
                 AI가 이미지를 스캔하여 어떤 음식인지, 몇 칼로리인지 자동으로 계산합니다.
+                <br /> 개인정보가 포함된 민감한 사진은 올리지 마세요.
               </p>
             </>
           )}

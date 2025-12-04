@@ -119,6 +119,70 @@ function MacroDonutChart({ carb, protein, fat }) {
   );
 }
 
+/* -------------------------------------------------
+   섭취량 비교 막대 그래프 (20–30대 여성 기준)
+-------------------------------------------------- */
+function MacroBarCompare({ totalCarb, totalProtein, totalFat }) {
+  // 대략적인 기준 (하루 2,000kcal / 탄 55%, 단 20%, 지 25% 기준)
+  const recommended = {
+    carb: 275, // g
+    protein: 100, // g
+    fat: 55, // g
+  };
+
+  const rows = [
+    {
+      key: 'carb',
+      label: '탄수화물',
+      consumed: totalCarb,
+      target: recommended.carb,
+      className: 'macro-bar-fill-carb',
+    },
+    {
+      key: 'protein',
+      label: '단백질',
+      consumed: totalProtein,
+      target: recommended.protein,
+      className: 'macro-bar-fill-protein',
+    },
+    {
+      key: 'fat',
+      label: '지방',
+      consumed: totalFat,
+      target: recommended.fat,
+      className: 'macro-bar-fill-fat',
+    },
+  ];
+
+  return (
+    <div className="macro-bar-compare">
+      {rows.map((row) => {
+        const ratio = row.target > 0 ? row.consumed / row.target : 0;
+        const widthPercent = Math.min(ratio * 100, 100); // 최대 100%까지만 채움
+
+        return (
+          <div key={row.key} className="macro-bar-row">
+            <div className="macro-bar-label">{row.label}</div>
+            <div className="macro-bar-track">
+              <div
+                className={`macro-bar-fill ${row.className}`}
+                style={{ width: `${widthPercent}%` }}
+              />
+            </div>
+            <div className="macro-bar-value">
+              {row.consumed.toFixed(1)}g / 권장 {row.target}g
+            </div>
+          </div>
+        );
+      })}
+
+      <p className="macro-bar-note">
+        * 기준: 20–30대 여성, 하루 약 2,000kcal 섭취를 가정한 대략적인 권장량이에요.
+      </p>
+    </div>
+  );
+}
+
 // 결과페이지
 export default function ResultPage() {
   const navigate = useNavigate();
@@ -205,9 +269,7 @@ export default function ResultPage() {
       meals = meals.map((meal) => ({
         ...meal,
         imageUrl: uploadedImageUrl || null,
-        foodName: detect?.foodName
-          ? detect.foodName
-          : `${baseWhen}에 드신 음식`,
+        foodName: detect?.foodName ? detect.foodName : `${baseWhen}에 드신 음식`,
         kcal: kcal || null,
         macrosPercent:
           kcal > 0
@@ -523,7 +585,26 @@ export default function ResultPage() {
           ))}
         </section>
 
-        {/* 3. AI 건강 솔루션 */}
+        {/* 3. 권장 섭취량 vs 오늘 섭취량 막대 그래프 (세 끼 스캔 전용) */}
+        {mode === 'threeMeals' &&
+          summary.kind === 'gram' &&
+          summary.totalKcal > 0 && (
+            <section className="macro-bar-compare-section">
+              <h3>20–30대 여성 권장 섭취량과 비교</h3>
+              <p className="macro-bar-caption">
+                20–30대 여성의 하루 권장 섭취량을 기준으로,
+                오늘 섭취한 탄수화물·단백질·지방 양을 비교해봤어요.
+              </p>
+
+              <MacroBarCompare
+                totalCarb={summary.totalCarb}
+                totalProtein={summary.totalProtein}
+                totalFat={summary.totalFat}
+              />
+            </section>
+          )}
+
+        {/* 4. AI 건강 솔루션 */}
         <section className="result-solution-section">
           <img
             src="/image/robot5.png"
@@ -542,7 +623,7 @@ export default function ResultPage() {
           </div>
         </section>
 
-        {/* 3-1. 책임성과 투명성 안내 */}
+        {/* 4-1. 책임성과 투명성 안내 */}
         <section className="result-disclaimer-section">
           <p className="result-disclaimer-text">
             칼로리·영양정보는 실제 섭취량·조리법에 따라 달라질 수 있으므로,
@@ -554,7 +635,7 @@ export default function ResultPage() {
           </p>
         </section>
 
-        {/* 4. PDF 저장 버튼 */}
+        {/* 5. PDF 저장 버튼 */}
         <section className="result-save-section">
           <button className="result-save-button" onClick={handleDownloadPdf}>
             AI 분석 결과 저장하기
