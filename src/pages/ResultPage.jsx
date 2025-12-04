@@ -20,9 +20,10 @@ function buildNutritionInfo(mode, meals, summary) {
         }
         const carb = m.macrosGram?.carb ?? 0;
         const protein = m.macrosGram?.protein ?? 0;
+        const fat = m.macrosGram?.fat ?? 0;
         return `${m.when}: ${m.foodName} 탄수화물 ${carb.toFixed(
           1
-        )}g, 단백질 ${protein.toFixed(1)}g`;
+        )}g, 단백질 ${protein.toFixed(1)}g, 지방 ${fat.toFixed(1)}g`;
       })
       .join('\n');
   }
@@ -51,8 +52,8 @@ function MacroDonutChart({ carb, protein, fat }) {
   const proteinPercent = (protein / total) * 100;
   const fatPercent = (fat / total) * 100;
 
-  const size = 110;
-  const strokeWidth = 18;
+  const size = 200;
+  const strokeWidth = 30;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
 
@@ -75,7 +76,7 @@ function MacroDonutChart({ carb, protein, fat }) {
             cy={size / 2}
             r={radius}
             fill="transparent"
-            stroke="#76c893"
+            stroke="#bbcc5cff"
             strokeWidth={strokeWidth}
             strokeDasharray={`${carbLen} ${circumference}`}
             strokeDashoffset={offsets.carb}
@@ -103,20 +104,23 @@ function MacroDonutChart({ carb, protein, fat }) {
         </g>
       </svg>
 
-      <div className="macro-donut-center-text">
-        <div>탄 {carbPercent.toFixed(0)}%</div>
-        <div>단 {proteinPercent.toFixed(0)}%</div>
-        <div>지 {fatPercent.toFixed(0)}%</div>
-      </div>
 
-      
+      <div className="macro-donut-center-text">
+        <div className="macro-center-pill macro-center-carb">
+          탄 {carbPercent.toFixed(0)}%
+        </div>
+        <div className="macro-center-pill macro-center-protein">
+          단 {proteinPercent.toFixed(0)}%
+        </div>
+        <div className="macro-center-pill macro-center-fat">
+          지 {fatPercent.toFixed(0)}%
+        </div>
+      </div>
     </div>
   );
 }
 
-/* -------------------------------------------------
-   결과 페이지
--------------------------------------------------- */
+//결과페이지
 export default function ResultPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -140,9 +144,9 @@ export default function ResultPage() {
   const [solutionLoading, setSolutionLoading] = useState(false);
   const [solutionError, setSolutionError] = useState(null);
 
-  // ─────────────────────────────────────────────
+
   // 요약/끼니별 데이터 계산
-  // ─────────────────────────────────────────────
+ 
   let summary = {
     kind: 'none',
     totalKcal: 0,
@@ -151,57 +155,84 @@ export default function ResultPage() {
     fatPercent: 0,
     totalCarb: 0,
     totalProtein: 0,
+    totalFat: 0,
   };
 
-  let meals = ['아침', '점심', '저녁'].map((when) => ({
-    when,
-    foodName: '식사를 하지 않았어요.',
-    imageUrl: null,
-    kcal: null,
-    macrosPercent: null,
-    macrosGram: null,
-  }));
+  let meals = [];
 
-  // oneMeal
-  if (mode === 'oneMeal' && recipe) {
-    const kcal = recipe.kcal ?? 0;
-    const proteinRate = recipe.proteinRate ?? 0;
-    const carbRate = recipe.carbRate ?? 0;
-    const fatRateRaw = recipe.fatRate ?? (1 - proteinRate - carbRate);
-    const fatRate = fatRateRaw < 0 ? 0 : fatRateRaw;
+  // 1) 한 끼 스캔(oneMeal)
+  if (mode === 'oneMeal') {
+    const baseWhen = uploadedMealTime || '식사';
 
-    summary = {
-      ...summary,
-      kind: 'percent',
-      totalKcal: kcal,
-      carbPercent: Math.round(carbRate * 100),
-      proteinPercent: Math.round(proteinRate * 100),
-      fatPercent: Math.round(fatRate * 100),
-    };
+    meals = [
+      {
+        when: baseWhen,
+        foodName: '식사를 하지 않았어요.',
+        imageUrl: null,
+        kcal: null,
+        macrosPercent: null,
+        macrosGram: null,
+      },
+    ];
 
-    meals = meals.map((meal) =>
-      meal.when === uploadedMealTime
-        ? {
-            ...meal,
-            imageUrl: uploadedImageUrl || null,
-            foodName: detect?.foodName
-              ? detect.foodName
-              : `${uploadedMealTime}에 드신 음식`,
-            kcal: kcal || null,
-            macrosPercent:
-              kcal > 0
-                ? {
-                    carbPercent: summary.carbPercent,
-                    proteinPercent: summary.proteinPercent,
-                    fatPercent: summary.fatPercent,
-                  }
-                : null,
-          }
-        : meal
-    );
+    if (recipe) {
+      const kcal = recipe.kcal ?? 0;
+      const proteinRate = recipe.proteinRate ?? 0;
+      const carbRate = recipe.carbRate ?? 0;
+      const fatRateRaw = recipe.fatRate ?? (1 - proteinRate - carbRate);
+      const fatRate = fatRateRaw < 0 ? 0 : fatRateRaw;
+
+      // g 단위 계산 (탄/단 4kcal, 지방 9kcal 기준)
+      let carbGram = 0;
+      let proteinGram = 0;
+      let fatGram = 0;
+
+      if (kcal > 0) {
+        carbGram = (kcal * carbRate) / 4;
+        proteinGram = (kcal * proteinRate) / 4;
+        fatGram = (kcal * fatRate) / 9;
+      }
+
+      summary = {
+        ...summary,
+        kind: 'gram',
+        totalKcal: kcal,
+        carbPercent: Math.round(carbRate * 100),
+        proteinPercent: Math.round(proteinRate * 100),
+        fatPercent: Math.round(fatRate * 100),
+        totalCarb: carbGram,
+        totalProtein: proteinGram,
+        totalFat: fatGram,
+      };
+
+      meals = meals.map((meal) => ({
+        ...meal,
+        imageUrl: uploadedImageUrl || null,
+        foodName: detect?.foodName
+          ? detect.foodName
+          : `${baseWhen}에 드신 음식`,
+        kcal: kcal || null,
+        macrosPercent:
+          kcal > 0
+            ? {
+                carbPercent: summary.carbPercent,
+                proteinPercent: summary.proteinPercent,
+                fatPercent: summary.fatPercent,
+              }
+            : null,
+        macrosGram:
+          kcal > 0
+            ? {
+                carb: carbGram,
+                protein: proteinGram,
+                fat: fatGram,
+              }
+            : null,
+      }));
+    }
   }
 
-  // threeMeals
+  // 2) 세 끼 스캔(threeMeals)
   if (mode === 'threeMeals') {
     const keyToLabel = {
       breakfast: '아침',
@@ -227,7 +258,7 @@ export default function ResultPage() {
       const kcal = data.nutrition?.calorie ?? null;
       const carb = data.nutrition?.carbohydrate ?? null;
       const protein = data.nutrition?.protein ?? null;
-      const fat = data.nutrition?.fat ?? 0;
+      const fat = data.nutrition?.fat ?? null;
 
       return {
         when: whenLabel,
@@ -268,6 +299,14 @@ export default function ResultPage() {
           : 0),
       0
     );
+    const totalFat = meals.reduce(
+      (sum, m) =>
+        sum +
+        (m.macrosGram && typeof m.macrosGram.fat === 'number'
+          ? m.macrosGram.fat
+          : 0),
+      0
+    );
 
     summary = {
       ...summary,
@@ -275,6 +314,7 @@ export default function ResultPage() {
       totalKcal,
       totalCarb,
       totalProtein,
+      totalFat,
     };
   }
 
@@ -293,16 +333,18 @@ export default function ResultPage() {
       1
     )}g, 단백질은 약 ${summary.totalProtein.toFixed(
       1
+    )}g, 지방은 약 ${summary.totalFat.toFixed(
+      1
     )}g 섭취하셨어요. 내일은 부족한 영양소를 보충할 수 있는 식단을 시도해 보세요.`;
   } else {
     defaultAiSolution =
       '오늘 기록된 식사가 없어요. 내일은 한 끼라도 AI와 함께 기록해 볼까요?';
   }
 
-  // 백엔드로 보낼 nutritionInfo 문자열
+
   const nutritionInfo = buildNutritionInfo(mode, meals, summary);
 
-  // ── AI 솔루션: 백엔드 호출 ─────────────────────────────────
+  // ── AI 솔루션
   useEffect(() => {
     if (!nutritionInfo) return;
 
@@ -346,26 +388,28 @@ export default function ResultPage() {
     });
 
     const imgData = canvas.toDataURL('image/png');
+
     const pdf = new jsPDF('p', 'pt', 'a4');
     const pdfWidth = pdf.internal.pageSize.getWidth();
     const pdfHeight = pdf.internal.pageSize.getHeight();
 
-    const imgWidth = pdfWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    const marginX = 40;
+    const marginY = 40;
 
-    let heightLeft = imgHeight;
-    let position = 0;
+    const maxWidth = pdfWidth - marginX * 2;
+    const maxHeight = pdfHeight - marginY * 2;
 
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-    heightLeft -= pdfHeight;
+    const widthRatio = maxWidth / canvas.width;
+    const heightRatio = maxHeight / canvas.height;
+    const scale = Math.min(widthRatio, heightRatio) * 0.98;
 
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
-      pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
-      heightLeft -= pdfHeight;
-    }
+    const imgWidth = canvas.width * scale;
+    const imgHeight = canvas.height * scale;
 
+    const x = marginX + (maxWidth - imgWidth) / 2;
+    const y = marginY + (maxHeight - imgHeight) / 2;
+
+    pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight);
     pdf.save('mymeal_result.pdf');
   };
 
@@ -396,7 +440,8 @@ export default function ResultPage() {
             ) : summary.kind === 'gram' ? (
               <p>
                 탄수화물은 약 {summary.totalCarb.toFixed(1)}g, 단백질은 약{' '}
-                {summary.totalProtein.toFixed(1)}g 섭취했어요 😌
+                {summary.totalProtein.toFixed(1)}g, 지방은 약{' '}
+                {summary.totalFat.toFixed(1)}g 섭취했어요 😌
               </p>
             ) : (
               <p>아직 기록된 식사가 없어요 😌</p>
@@ -417,7 +462,11 @@ export default function ResultPage() {
                 {meal.imageUrl ? (
                   <img src={meal.imageUrl} alt={meal.foodName} />
                 ) : (
-                  <div className="result-meal-image-placeholder" />
+                  <img
+                    src="/image/robot6.png"
+                    alt="식사 정보 없음"
+                    className="result-meal-robot"
+                  />
                 )}
               </div>
 
@@ -432,17 +481,18 @@ export default function ResultPage() {
                   </p>
                 ) : null}
 
-                {meal.macrosPercent ? (
-                  <p className="result-meal-macros">
-                    탄수화물 {meal.macrosPercent.carbPercent}% / 단백질{' '}
-                    {meal.macrosPercent.proteinPercent}% / 지방{' '}
-                    {meal.macrosPercent.fatPercent}%
-                  </p>
-                ) : meal.macrosGram ? (
+                {/* g가 있으면 g 우선, 없으면 퍼센트 */}
+                {meal.macrosGram ? (
                   <p className="result-meal-macros">
                     탄수화물 {meal.macrosGram.carb.toFixed(1)}g / 단백질{' '}
                     {meal.macrosGram.protein.toFixed(1)}g / 지방{' '}
                     {meal.macrosGram.fat.toFixed(1)}g
+                  </p>
+                ) : meal.macrosPercent ? (
+                  <p className="result-meal-macros">
+                    탄수화물 {meal.macrosPercent.carbPercent}% / 단백질{' '}
+                    {meal.macrosPercent.proteinPercent}% / 지방{' '}
+                    {meal.macrosPercent.fatPercent}%
                   </p>
                 ) : (
                   <p className="result-meal-empty">
@@ -464,9 +514,7 @@ export default function ResultPage() {
                       fat={meal.macrosPercent.fatPercent}
                     />
                   ) : (
-                    <div className="result-chart-placeholder">
-                    
-                    </div>
+                    <div className="result-chart-placeholder"></div>
                   )}
                 </div>
               </div>
@@ -491,6 +539,19 @@ export default function ResultPage() {
               <p>{aiSolution || defaultAiSolution}</p>
             )}
           </div>
+        </section>
+
+        {/* 3-1. 책임성과 투명성 안내 */}
+        <section className="result-disclaimer-section">
+
+          <p className="result-disclaimer-text">
+            칼로리·영양정보는 실제 섭취량·조리법에 따라 달라질 수 있으므로,
+            AI 분석 결과를 맹신하지 말고 참고용으로만 사용해 주세요.
+          </p>
+          <p className="result-disclaimer-text">
+            업로드된 이미지는 AI 분석 목적 외 다른 용도로 저장·활용하지 않으며,
+            사용자의 동의 없이 제3자에게 제공되지 않습니다.
+          </p>
         </section>
 
         {/* 4. PDF 저장 버튼 */}
