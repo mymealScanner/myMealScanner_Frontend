@@ -88,29 +88,19 @@ export default function OneMealUploadPage() {
 
     const detectData = await detectRes.json(); // { foodName, prediction, when, ... }
     const foodName = detectData.foodName;
-
-    // 4) 음식 레시피 가져오기
-    const recipeRes = await fetch(
-      `http://localhost:8080/getFoodRecipe/${encodeURIComponent(foodName)}`
-    );
-
-    if (!recipeRes.ok) {
-      throw new Error('레시피 정보 요청 실패');
-    }
-
-    const recipeData = await recipeRes.json(); // { title, ingr: [...] }
+    console.log('Detected food name:', foodName);
 
     // 5) 레시피 → 영양 요약 계산 (칼로리/탄단지 g)
     const nutritionRes = await fetch(
-      'http://localhost:8080/nutrition/summary-recipe',
+      `http://localhost:8080/nutritionInfo/${foodName}`,
       {
-        method: 'POST',
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(recipeData), // title + ingr 그대로 전송
+        }
       }
     );
+    console.log(nutritionRes)
 
     if (!nutritionRes.ok) {
       throw new Error('영양 정보 요청 실패');
@@ -142,8 +132,9 @@ export default function OneMealUploadPage() {
         recipe: recipeForResult, // 🔹 비율 정보 포함된 객체
       },
     });
+    console.log(recipeForResult)
   } catch (err) {
-    console.error(err);
+    console.log(err);
     alert('AI 분석 중 오류가 발생했습니다. 콘솔을 확인해 주세요.');
   }
 };

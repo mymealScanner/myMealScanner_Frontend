@@ -136,47 +136,60 @@ export default function ThreeMealsUploadPage() {
         const detectData = await detectRes.json(); // { foodName, prediction, when, ... }
         const foodName = detectData.foodName;
 
-        // 2) 음식 이름으로 레시피 정보 가져오기
-        const recipeRes = await fetch(
-          `http://localhost:8080/getFoodRecipe/${encodeURIComponent(
-            foodName
-          )}`
+        
+
+        const nutritionRes = await fetch(
+          `http://localhost:8080/nutritionInfo/${foodName}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            }
+          }
         );
+        const nutrition = await nutritionRes.json();
 
-        if (!recipeRes.ok) {
-          throw new Error(`레시피 정보 요청 실패 (${foodName})`);
-        }
+        // 2) 음식 이름으로 레시피 정보 가져오기
+        // const recipeRes = await fetch(
+        //   `http://localhost:8080/getFoodRecipe/${encodeURIComponent(
+        //     foodName
+        //   )}`
+        // );
 
-        const recipeData = await recipeRes.json(); // { title, ingr: [...] }
+        // if (!recipeRes.ok) {
+        //   throw new Error(`레시피 정보 요청 실패 (${foodName})`);
+        // }
+
+        // const recipeData = await recipeRes.json(); // { title, ingr: [...] }
 
         // 3) 레시피 정보를 nutrition/summary-recipe 로 보내서
         //    총 칼로리 / 탄수화물 / 단백질 값 얻기
-        const summaryRes = await fetch(
-          'http://localhost:8080/nutrition/summary-recipe',
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(recipeData),
-          }
-        );
+        // const summaryRes = await fetch(
+        //   'http://localhost:8080/nutritioninfo/summary-recipe',
+        //   {
+        //     method: 'GET',
+        //     headers: {
+        //       'Content-Type': 'application/json',
+        //     },
+        //     body: JSON.stringify(recipeData),
+        //   }
+        // );
 
-        if (!summaryRes.ok) {
-          throw new Error(
-            `영양 요약 정보 요청 실패 (${foodName})`
-          );
-        }
+        // if (!summaryRes.ok) {
+        //   throw new Error(
+        //     `영양 요약 정보 요청 실패 (${foodName})`
+        //   );
+        // }
 
-        const nutritionData = await summaryRes.json(); // { calorie, carbohydrate, protein }
+        // const nutritionData = await summaryRes.json(); // { calorie, carbohydrate, protein }
 
         mealResults[key] = {
           key,
           whenLabel: MEAL_KEY_TO_LABEL[key],      // '아침' / '점심' / '저녁'
           imageUrl: previews[key],               // 썸네일 URL
           detect: detectData,                    // 어떤 음식인지
-          recipe: recipeData,                    // 레시피(title, ingr 배열)
-          nutrition: nutritionData,              // { calorie, carbohydrate, protein }
+          //recipe: recipeData,                    // 레시피(title, ingr 배열)
+          nutrition: nutrition,              // { calorie, carbohydrate, protein }
         };
       }
 
